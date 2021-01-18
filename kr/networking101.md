@@ -1,15 +1,16 @@
-# 제목: Networking 101
+# 제목: Networking 101 (TCP/IP)
 
 <!-- TODO 서론 입력 해야함 -->
 
 ## 인터넷의 작동 원리
 
-혹시 지금 인터넷을 접속할 수 있는 환경이라면 (당연히 접속할 수 있는 환경이시겠죠.), 주소창에 172.217.25.206 이라는 숫자를 복사 붙여넣기로 넣어보시기 바랍니다.
-굉장히 친숙한 페이지가 화면에 나오지 않나요? 이 것을 우리는 IP 주소라고 부릅니다. 하지만 이러한 웹사이트들을 접속하기 위해서 반드시 IP 주소를 입력해 들어가야 한다고 생각해봅시다. 정말 끔찍하겠죠? 저 긴 숫자 조합을 외우고 다녀야 될테니까요. 네트워크의 세계에서 마치 사람의 이름처럼, 컴퓨터는 IP라는 고유의 숫자들을 부여받습니다. 숫자로 이름을 부여받는 "컴퓨터적인" 사고에 대한 이질감을 극복하고 더 쉽게 대중들이 이해할 수 있는 시스템이 필요했습니다. 이 필요에 의해 네트워크 엔지니어들은, DNS, 즉 Domain Name System 을 개발하기에 이릅니다. DNS의 역할은 매우 간단합니다. 인간이 알아들을 수 있는 "이름" 을 IP 주소인 "숫자" 로 변환해주는 것 입니다.
+혹시 지금 인터넷을 접속할 수 있는 환경이라면 (당연히 접속할 수 있는 환경이시겠죠.), 주소창에 172.217.25.206 이라는 숫자를 복사 붙여넣기로 넣어보시기 바랍니다. 굉장히 친숙한 페이지가 화면에 나오지 않나요? 이 것을 우리는 IP 주소라고 부릅니다. 하지만 이러한 웹사이트들을 접속하기 위해서 반드시 IP 주소를 입력하고 들어가야 한다고 생각해봅시다. 정말 끔찍하겠죠? 저 긴 숫자 조합을 외우고 다녀야 될테니까요. 네트워크의 세계에서 마치 사람의 이름처럼, 컴퓨터는 IP라는 고유의 숫자들을 부여받습니다. 숫자로 이름을 부여받는 "컴퓨터적인" 사고에 대한 이질감을 극복하고 더 쉽게 대중들이 이해할 수 있는 시스템이 필요했습니다. 이 필요에 의해 네트워크 엔지니어들은, DNS, 즉 Domain Name System 을 개발하기에 이릅니다. DNS의 역할은 매우 간단합니다. 인간이 알아들을 수 있는 "이름" 을 IP 주소인 "숫자" 로 변환해주는 것 입니다.
 
-이러한 이름이 IP 주소로 변환되는 과정은 생각보다 굉장히 간단합니다. 예를들어 여러분이 주소창에 google.com을 입력한다고 가정해 봅시다. 만약 여러분의 브라우저가 이 주소를 여러분 컴퓨터의 캐시메모리에서 찾지 못한다면, Resolver 서버에 쿼리를 보내게 됩니다. 이 Resolver Server 는 쉽게 말해서, **ISP**, 즉 KT, SKT와 같은 여러분의 인터넷 서비스 제공자라고 생각하시면 됩니다. 이 Resolver 가 쿼리를 받을 때, 서버에 있는 캐시 메모리에서 먼저 google.com의 IP 주소를 찾아보려고 할 것 입니다. 만약 여기서도 이 정보를 찾지 못한다면, Root Server 라고 불리우는 DNS 의 가장 최상위에 위치하는 서버에 쿼리를 할 것 입니다. 이 Root Server 는 전세계에 13 세트만 존재하며, 전 세계 여러 위치에 배치되어 있습니다. 이 Root Server 는 사실 여러분들이 요청한 IP 주소를 알고있지 못합니다. 대신 .com 도메인의 가장 최상단에 위치해 있는 서버인 TLD 서버로 유도합니다. Resolver 서버는 다시 이 TLD 서버에게 IP 요청을 하게 됩니다. 이 TLD 서버는 .com, .net, .org 와 같은 최상위 도메인에 대한 주소값을 보관해 두는데, 이 서버 역시 IP 주소를 알고있지는 못합니다. 최종적으로 TLD 서버는 우리의 요청을 Authoritatve Name Server 라는 모든 도메인 정보를 갖고 있는 서버로 라우트 해주고, 비로서 우리가 요청한 IP 값을 얻게 되는 것 입니다.
+이러한 이름이 IP 주소로 변환되는 과정은 생각보다 어렵지 않습니다. 예를들어 여러분이 주소창에 google.com을 입력한다고 가정해 봅시다. 만약 여러분의 브라우저가 이 주소를 여러분 컴퓨터의 캐시메모리에서 찾지 못한다면, Resolver 서버에 쿼리를 보내게 됩니다. 이 Resolver Server 는 쉽게 말해서, **ISP**, 즉 KT, SKT와 같은 여러분의 인터넷 서비스 제공자라고 생각하시면 됩니다. 이 Resolver 가 쿼리를 받을 때, 서버에 있는 캐시 메모리에서 먼저 google.com의 IP 주소를 찾아보려고 할 것 입니다. 만약 여기서도 이 정보를 찾지 못한다면, Root Server 라고 불리우는 DNS 의 가장 최상위에 위치하는 서버에 쿼리를 할 것 입니다. 이 Root Server 는 전세계에 13 세트만 존재하며, 전 세계 여러 위치에 배치되어 있습니다. 이 Root Server 는 사실 여러분들이 요청한 IP 주소를 알고있지 못합니다. 대신 .com 도메인의 가장 최상단에 위치해 있는 서버인 TLD 서버로 유도합니다. Resolver 서버는 다시 이 TLD 서버에게 IP 요청을 하게 됩니다. 이 TLD 서버는 .com, .net, .org 와 같은 최상위 도메인에 대한 주소값을 보관해 두는데, 이 서버 역시 IP 주소를 알고있지는 못합니다. 최종적으로 TLD 서버는 우리의 요청을 Authoritatve Name Server 라는 모든 도메인 정보를 갖고 있는 서버로 라우트 해주고, 비로서 우리가 요청한 IP 값을 얻게 되는 것 입니다.
 
 <!-- TODO 자 여기까지 우리는 x 를 배웠습니다 -->
+
+이런 모델들이 있다는 것은 네트워크에서 어떠한 역할을 하는 요소들이 존재하는지, 각 역할이 무엇인지 파악하기에는 좋습니다. 하지만 결국 모델은 모델일 뿐 실질적으로 적용했을 때는 이론상과 조금 다릅니다. SSL 과 TLS 을 예시로 살펴봅시다. TLS는 말그대로 Transport Layer Security, 즉 앞서 말한 모델에서 Transport Layer 의 일부입니다. 하지만 실질적으로는 OSI 모델의 Application, Presentation, Session 혹은 TLS/IP 의 Application Layer 에 적용되고 있습니다. TLS는 내부적인 transport는 TCP를 사용하기 때문에 transport layer 에 적합하겠지만, SSL/TLS 는 헨드셰이크를 쓰기 때문에 Session Layer 라고도 볼 수 있고, encryption(암호화) 역할 까지 하기 때문에 Application 과 Presentation Layer 에 속한 것일 수도 있습니다. 하지만 Application 이 SSL과 TLS를 transport layer 로 쓰기 때문에 실질적으로는 Transport layer 에 속해야 합니다. 따라서 모델은 어디까지나 이해를 하기 위해서 구분해놓은 것이지 절대적인 기준으로 받아들여서는 안될 것 입니다.
 
 ![alt](http://drive.google.com/uc?id=1AIUbp_rqGIlmygyQqt0war3aC1BNeC4t)
 
@@ -19,42 +20,73 @@ Latency란 출발지에서 부터 목적지 Packet 을 보내는데 걸리는 �
 
 ![alt](http://drive.google.com/uc?id=1xZO467PtxlZfVjU0xAFg6jN5CugidWPM)
 
+사실 HTTP는 공식적으로 TCP 프로토콜로만 이루어져야 한다는 언급이 없습니다. 사실 뒤에 자세히 다룰 UDP, User Datagram Protocol과 같은 다른 프토토콜들로 데이터를 주고 받을 수 있습니다. 물론 현실 세계에서의 대부분 HTTP는 TCP가 바탕이 되어있지만요.
 
-사실 HTTP는 공식적으로 TCP 프로토콜로만 이루어져야 한다는 언급이 없습니다. 사실 뒤에 자세히 다룰 UDP, User Datagram Protocol과 같은 다른 프토토콜들로 데이터를 주고 받을 수 있습니다. 물론 현실 세계에서의 대부분 HTTP는 TCP가 바탕이 되어있지만요. 
+Application Layer
 
+- Applications, protocols, and services, that interface with the end user
+- Data is formatted, converted, encrypted, decrypted compressed, and decompressed, and sent or presented to the user (MIME Type)
+- Open, close and manage a session between end-user application processes(RPC)
 
-## TCP 
+Trasnport Layer
 
-인터넷의 핵심과도 같은 두 프로토콜은 IP 와 TCP 입니다. (TCP/IP) <br />
-IP 는 위에서 말했다시피 host 에서 다른 host로 가는 라우팅(routing)과 어드레싱(addressing) 기능을 제공해주며, TCP(Transmission Control Protocol)은 불안정한 통로위에 안정적인 네트워크가 이루어질 수 있도록 만들어줍니다. 1981년, RFC675 라는 하나의 제안서로 시작 된 이 TCP는 몇 가지 보완된 점은 있지만 오늘 날의 웹에서 사용되는 통신 방식입니다. 이러한 TCP는 네트워크에 대한 효율적인 "추상화" 를 제공하는데, 네트워크 커뮤니케이션에 있어서 복잡한 요소들인 잃어버린 데이터에 대한 재전송(retransmission), 정렬된 송신(in-order delivery), congestion control(막힘 제어), congestion avoidance(막힘 회피) 등에 대한 내용을 담고있습니다. 앞서 언급드린 TCP의 데이터 확실성은 브라우저상의 웹 성능을 최적화 시키는데에 대한 몇 가지 장애요소들을 필연적으로 만들게 됩니다. 
+- Facilitates end to end communications between multiple applications simultaneously(ports) (Transport services provide)
+- Reliable and unreliable end-to-end data trasnport and data stream services (TCP, UDP , SCTP)
+- Connection oriented, connectionless communications, and data stream services (session establishement, termination)
 
+Network Layer
 
-### Three-Way Handshake 
+- Provide host addressing (IP)
+- Choose the best path to the destination (Routning)
+- Swtich packets out of the correcty interface (Forwarding)
+- Maintain quality of service (QoS) 우선순위 결정
+- Connectionless end-to-end networking
 
-모든 TCP 연결은 Three-Way Handshake, 세 방향 악수로 시작합니다. 클라이언트와 서버간의 통신이 시작되기 전, 이 둘은 packet 수열에 각자 동의해야 합니다. 이 수열은 양측 방향에서 임의적으로 선택되는데 다음의 이미지를 참조해주시길 바랍니다. 
+## TCP
+
+인터넷의 핵심과도 같은 두 프로토콜은 IP 와 TCP 입니다. (TCP/IP)
+IP 는 위에서 말했다시피 host 에서 다른 host로 가는 라우팅(routing)과 어드레싱(addressing) 기능을 제공해주며, TCP(Transmission Control Protocol)은 불안정한 통로위에 안정적인 네트워크가 이루어질 수 있도록 만들어줍니다. 1981년, RFC675 라는 하나의 제안서로 시작 된 이 TCP는 몇 가지 보완된 점은 있지만 오늘 날의 웹에서 사용되는 통신 방식입니다. 이러한 TCP는 네트워크에 대한 효율적인 "추상화" 를 제공하는데, 네트워크 커뮤니케이션에 있어서 복잡한 요소들인 잃어버린 데이터에 대한 재전송(retransmission), 정렬된 송신(in-order delivery), congestion control(막힘 제어), congestion avoidance(막힘 회피) 등에 대한 내용을 담고있습니다. 앞서 언급드린 TCP의 데이터 확실성은 브라우저상의 웹 성능을 최적화 시키는데에 대한 몇 가지 장애요소들을 필연적으로 만들게 됩니다.
+
+### Three-Way Handshake
+
+모든 TCP 연결은 Three-Way Handshake, 세 방향 악수로 시작합니다. 클라이언트와 서버간의 통신이 시작되기 전, 이 둘은 packet 수열에 각자 동의해야 합니다. 이 수열은 양측 방향에서 임의적으로 선택되는데 다음의 이미지를 참조해주시길 바랍니다.
 
 **SYN**<br />
-클라이언트는 앞서 설명했듯이, 임의적으로 수열 숫자 x 를 만들어서 경우에따라 TCP 스펙상의 플래그와 설정 값을 부여하고 서버로 보냅니다.  
+클라이언트는 앞서 설명했듯이, 임의적으로 수열 숫자 x 를 만들어서 경우에따라 TCP 스펙상의 플래그와 설정 값을 부여하고 서버로 보냅니다.
 
 **SYN ACK**<br />
 서버는 클라이언트에게 받은 x 숫자를 1 만큼 늘려주고, 자체적으로 플래그와 옵션들이 붙어 있는 'y' 라는 임의적인 수열을 만든 후, 이를 클라이언트에게 되돌려 보냅니다.
 
 **ACK**<br />
-클라이언트는 기존의 수열 숫자들인 'x' 와 'y' 를 각각 1 씩 늘려준 뒤, 가장 마지막 순서에 있는 패킷인 ACK를 발송합니다. 
+클라이언트는 기존의 수열 숫자들인 'x' 와 'y' 를 각각 1 씩 늘려준 뒤, 가장 마지막 순서에 있는 패킷인 ACK를 발송합니다.
 
 [이미지]
 
-이 세 방향의 동의가 모두 이루어진다면, 드디어 이 둘 사이의 애플리케이션의 데이터가 흐를 수 있게 됩니다. 문제는 각 shake 가 이루어질 때마다 발생하는 레이턴시 인데, 이러한 지연시간으로 인해 새로운 TCP 연결을 만드는 것은 부담이 됩니다. 때문에, 이러한 연결을 재사용 하는 것이 TCP위에 작동되는 앱에 대한 최적화를 결정짓는 중요한 요소가 됩니다.  
+이 세 방향의 동의가 모두 이루어진다면, 드디어 이 둘 사이의 애플리케이션의 데이터가 흐를 수 있게 됩니다. 문제는 각 shake 가 이루어질 때마다 발생하는 레이턴시 인데, 이러한 지연시간으로 인해 새로운 TCP 연결을 만드는 것은 부담이 됩니다. 때문에, 이러한 연결을 재사용 하는 것이 TCP위에 작동되는 앱에 대한 최적화를 결정짓는 중요한 요소가 됩니다.
 
-### Congestion Avoidance & Control 
+### Congestion Avoidance & Control
 
-**Slow-Start** 
+**Slow-Start**
 
-### TCP 최적화 
+### TCP 최적화
 
+## UDP
 
-## UDP 
+| Pros            | Cons                          |
+| --------------- | ----------------------------- |
+| 작은 packet 크기 | 확인이 안됨                      |
+| Bandwidth 를 덜 차지함  | 전달이 보장되지 않음                |
+| TCP 보다 빠름 | congestion control이 없음       |
+| Stateless       | packet의 순서가 보장되지 않음       |
+|                 | Connectionless                |
+|                 | 보안문제                        |
 
-### UDP 최적화 
+들어오는 데이터를 제어할 방법이 전무하기 때문에 많은 사람들이 UDP 를 끄기도 합니다.
+
+### UDP 최적화
 
 ## TLS
+
+
+
+
