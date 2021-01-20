@@ -1,4 +1,4 @@
-# 제목: Networking 101 (TCP/IP)
+# 제목: Networking 101 - 인터넷의 작동원리와 TCP/IP의 기초
 
 <!-- TODO 서론 입력 해야함 -->
 
@@ -8,49 +8,164 @@
 
 이러한 이름이 IP 주소로 변환되는 과정은 생각보다 어렵지 않습니다. 예를들어 여러분이 주소창에 google.com을 입력한다고 가정해 봅시다. 만약 여러분의 브라우저가 이 주소를 여러분 컴퓨터의 캐시메모리에서 찾지 못한다면, Resolver 서버에 쿼리를 보내게 됩니다. 이 Resolver Server 는 쉽게 말해서, **ISP**, 즉 KT, SKT와 같은 여러분의 인터넷 서비스 제공자라고 생각하시면 됩니다. 이 Resolver 가 쿼리를 받을 때, 서버에 있는 캐시 메모리에서 먼저 google.com의 IP 주소를 찾아보려고 할 것 입니다. 만약 여기서도 이 정보를 찾지 못한다면, Root Server 라고 불리우는 DNS 의 가장 최상위에 위치하는 서버에 쿼리를 할 것 입니다. 이 Root Server 는 전세계에 13 세트만 존재하며, 전 세계 여러 위치에 배치되어 있습니다. 이 Root Server 는 사실 여러분들이 요청한 IP 주소를 알고있지 못합니다. 대신 .com 도메인의 가장 최상단에 위치해 있는 서버인 TLD 서버로 유도합니다. Resolver 서버는 다시 이 TLD 서버에게 IP 요청을 하게 됩니다. 이 TLD 서버는 .com, .net, .org 와 같은 최상위 도메인에 대한 주소값을 보관해 두는데, 이 서버 역시 IP 주소를 알고있지는 못합니다. 최종적으로 TLD 서버는 우리의 요청을 Authoritatve Name Server 라는 모든 도메인 정보를 갖고 있는 서버로 라우트 해주고, 비로서 우리가 요청한 IP 값을 얻게 되는 것 입니다.
 
-<!-- TODO 자 여기까지 우리는 x 를 배웠습니다 -->
-
-이런 모델들이 있다는 것은 네트워크에서 어떠한 역할을 하는 요소들이 존재하는지, 각 역할이 무엇인지 파악하기에는 좋습니다. 하지만 결국 모델은 모델일 뿐 실질적으로 적용했을 때는 이론상과 조금 다릅니다. SSL 과 TLS 을 예시로 살펴봅시다. TLS는 말그대로 Transport Layer Security, 즉 앞서 말한 모델에서 Transport Layer 의 일부입니다. 하지만 실질적으로는 OSI 모델의 Application, Presentation, Session 혹은 TLS/IP 의 Application Layer 에 적용되고 있습니다. TLS는 내부적인 transport는 TCP를 사용하기 때문에 transport layer 에 적합하겠지만, SSL/TLS 는 헨드셰이크를 쓰기 때문에 Session Layer 라고도 볼 수 있고, encryption(암호화) 역할 까지 하기 때문에 Application 과 Presentation Layer 에 속한 것일 수도 있습니다. 하지만 Application 이 SSL과 TLS를 transport layer 로 쓰기 때문에 실질적으로는 Transport layer 에 속해야 합니다. 따라서 모델은 어디까지나 이해를 하기 위해서 구분해놓은 것이지 절대적인 기준으로 받아들여서는 안될 것 입니다.
+<br />
 
 ![alt](http://drive.google.com/uc?id=1AIUbp_rqGIlmygyQqt0war3aC1BNeC4t)
 
-> 2011년 초, Hibernia Networks사와 중국의 Huawei 는 대서양을 가로질러 4600km 길이의 거대한 해저 케이블 시스템을 구축했습니다. 런던과 뉴욕을 잇는 이 해저 케이블은 5000 억 근처의 시공 비용이 투자 된 거대한 프로젝트 였습니다. 이 해저 케이블의 목적은 단 한가지 였습니다. 런던과 뉴욕간의 금융 거래속도를 단 5 밀리 초를 줄이기 위해 시공된 것 입니다. 이 5 밀리 초라는 체감조차 하기 힘든 짧은 시간은 기존 뉴욕-런던 거래소에서 내던 비용을 무려 초당 약 800억을 절약해줍니다. 이 이야기가 네트워킹이랑 무슨 관련이 있냐구요? 앞으로 이야기 할 주제는 바로 앞서 언급한 5 밀리 초라는 지연 시간, 즉 Latency에 대한 부분이기 때문입니다.
+<br />
 
-Latency란 출발지에서 부터 목적지 Packet 을 보내는데 걸리는 시간을 의미합니다.
+기본적으로 인터넷이란 여러분의 브라우저가 서버에 요청을 하고, 응답을 받는 것을 의미합니다. 서버란 그저 인터넷 상에 존재하는 다른 컴퓨터일 뿐입니다. 여러분의 컴퓨터, 혹은 서버가 이 인터넷에 접속 할 때 앞서 말한 IP 주소를 부여받습니다. 지금 바로 구글에 들어가서 "What's my IP address?" 라고 치신다면 여러분들은 본인 컴퓨터의 IP 주소를 알 수 있을 것 입니다. 서버랑 여러분들 컴퓨터의 차이는 서버는 서버 소프트웨어가 깔려있고 이 것이 구동되지만, 일반적인 경우 여러분들의 컴퓨터는 그렇지 않을 것 입니다. 예를들어 여러분들이 https://google.com 에 접속한다고 가정해봅시다.
+
+[chrome-network]
+
+F12 를 눌러 구글의 콘솔창을 열고 네트워크 탭에 들어간다면, 위의 예시처럼 여러분들이 해당 웹사이트에 접속할 때 불러오는 여러가지 파일들을 한 눈에 보실 수 있습니다. 여기서 주목해야 할 점은 Type 라 불리우는 행입니다. 자세히 보시게 되면 몇 가지 친숙한 단어들이 눈에 띄는 것을 목격하실 수 있을 것 입니다. document, script, javascript, font, png 등 아마 인터넷 환경에 친숙하신 분들이라면 이러한 것들이 의미하는 것이 무엇인지 금방 눈치채실 수 있을 것 입니다. 원래는 content-type 라는 http 의 헤더로써 비롯 된 분류인데, 크롬에서 자체적으로 사용자가 알기쉽게 인터페이스를 구성한 것 입니다. Content-type 에 대한 자세한 내용은 추후 HTTP 관련 포스팅에서 다루도록 하겠습니다.
+
+이 Content-type 에 따라서 여러분의 브라우저는 불러오는 파일의 종류가 무엇인지 알게되고, 예를들어 HTML을 불러온다면 이를 parse(분석) 해서 여러분의 화면에 보여주게 됩니다. 위의 이미지에서 보시다시피 브라우저가 가장 먼저 불러오게 되는 파일은 document, 즉 HTML 입니다. 브라우저는 HTML 을 불러오는 순간 위부터 아래까지 순서대로 읽습니다. 만약 HTML 이 다른 css나 script와 같은 asset(파일)을 불러오는 것이 명시되어 있다면, 잠시 멈추고 이 파일들에 대한 새로운 요청을 하게 됩니다. 때문에 style 등을 HTML의 head 에서 로드해주지 않는다면 FOUC(Flash of Unstyled Content): 스타일이 적용되기 전에 잠깐 raw HTML 이 나오는 현상등이 발생하게 됩니다. JS 가 들어가있는 스크립트 파일을 body 최하단에 놓거나 minified라는 압축된 단일 JS 파일을 불러오는 것은 무거운 스크립트 파일을 나중에 불러오고 하나의 파일에 대한 단일 요청만 보내 불러오는 속도를 최적화 하기 위함입니다.
+
+<br />
+
+![alt](webserverOverview)
+
+<br />
+
+앞서 클라이언트, 즉 프론트엔드의 관점에서 브라우저와 인터넷에 대한 이야기를 했다면 이번엔 서버쪽의 이야기를 하도록 하겠습니다. 위에 보이는 예제들은 가장 보편적이고 간단한 LAMP스택 (Linux, Apache, MySQL, PHP) 기반의 서버 구조부터 최근 많이 쓰이는 SPA(싱글페이지 앱) 웹 서버 구조입니다. 대부분의 웹사이트들은 HTTP 기본 포트인 80 이나 HTTPS 경로인 443 으로 연결이 되어 있습니다. 예를 들어서 사용자가 클라이언트 상에 보여지는 회원가입 버튼을 누른다면, DNS가 서버의 IP주소를 찾아 요청을 하게 됩니다. LAMP 스택으로 예를 들자면, apache server 는 자동적으로 http://63.45.24.124:80 으로 요청을 보내게 됩니다. Apache 서버는 http 요청의 헤더에 있는 경로를 기반으로 어떠한 페이지를 보여줄지 판단합니다. 만약 아무런 path가 없다면 index.html을 보여주는 것이 기본값으로 세팅되어 있습니다. 만약 path가 정해져 있다면 그 경로와 일치하는 파일을 브라우저상에 보여주게 되겠죠. 하지만 일반 페이지들은 html로만 이루어져있지 않습니다. 따라서 만약 유저가 댓글창을 보려고 서버에 요청을 보낼 경우, 서버는 댓글 데이터가 담긴 db에 요청을 보내 댓글에 대한 정보를 불러와 자바스크립트를 통해 이러한 정보를 유저에게 보여줄 것 입니다. 마찬가지로 삭제 요청을 보낸다면 서버에서 이 db에 해당 문건을 삭제하는 요청을 보낼 것이구요. 어디까지나 개념을 이해하기 위한 부분이니 일반적인 웹사이트는 대략 이런식으로 작동한다 정도만 이해하면 되겠습니다.
+
+그렇다면 만약 여러분들이 만든 사이트 인기가 너무 많아져서 많은 인원들이 몰리게 된다면 어떻게 해야할까요? 물론 단순히 서버의 성능을 높이는 것으로 당분간은 버틸 수 있겠지만, youtube, twitter 같은 커다란 웹사이트의 경우 이러한 방식에는 한계가 있을 것 입니다. 이런 상황에서는 아래의 이미지와 같이 똑같은 서버를 복사하여 동시에 구동시키는 것 입니다. 이 서버들은 각자 다른 IP 주소를 갖고 있을 것 이며, Load Balancer 클라이언트를 이 서버들과 이어주는 역할을 하게 됩니다. Load Balancer 라는 단어가 다소 생소하게 들릴 수 있겠지만, 클라이언트가 어느 곳에 요청을 보내야할지 알려주는 일종의 경로설정 이라고 생각하면 이해가 편합니다. 대략적인 흐름은 다음과 같습니다.
+
+1. 유저가 Load Balancer 로 접속한다.
+2. Load Balancer 가 유저를 각기 다른 서버로 분배한다.
+3. 유저에게 분배 된 서버에서 요청을 보낸다.
+
+<br />
 
 ![alt](http://drive.google.com/uc?id=1xZO467PtxlZfVjU0xAFg6jN5CugidWPM)
 
-사실 HTTP는 공식적으로 TCP 프로토콜로만 이루어져야 한다는 언급이 없습니다. 사실 뒤에 자세히 다룰 UDP, User Datagram Protocol과 같은 다른 프토토콜들로 데이터를 주고 받을 수 있습니다. 물론 현실 세계에서의 대부분 HTTP는 TCP가 바탕이 되어있지만요.
+<br />
 
-Application Layer
+웹서버와 HTTP 요청에 대한 자세한 부분과 브라우저가 이를 어떻게 최적화 시키는지에 대해서는 추후 다룰 HTTP, Proxy, Nginx등 관련 포스팅에서 자세히 얘기하도록 하겠습니다.
 
-- Applications, protocols, and services, that interface with the end user
-- Data is formatted, converted, encrypted, decrypted compressed, and decompressed, and sent or presented to the user (MIME Type)
-- Open, close and manage a session between end-user application processes(RPC)
+## Latency 와 Bandwidth
 
-Trasnport Layer
+> 2011년 초, Hibernia Networks사와 중국의 Huawei 는 대서양을 가로질러 4600km 길이의 거대한 해저 케이블 시스템을 구축했습니다. 런던과 뉴욕을 잇는 이 해저 케이블은 5000 억 근처의 시공 비용이 투자 된 거대한 프로젝트 였습니다. 이 해저 케이블의 목적은 단 한가지 였습니다. 런던과 뉴욕간의 금융 거래속도를 단 5 밀리 초를 줄이기 위해 시공된 것 입니다. 이 5 밀리 초라는 체감조차 하기 힘든 짧은 시간은 기존 뉴욕-런던 거래소에서 내던 비용을 무려 초당 약 800억을 절약해줍니다. 이 이야기가 네트워킹이랑 무슨 관련이 있냐구요? 앞으로 이야기 할 주제는 바로 앞서 언급한 5 밀리 초라는 지연 시간, 즉 Latency에 대한 부분이기 때문입니다.
 
-- Facilitates end to end communications between multiple applications simultaneously(ports) (Transport services provide)
-- Reliable and unreliable end-to-end data trasnport and data stream services (TCP, UDP , SCTP)
-- Connection oriented, connectionless communications, and data stream services (session establishement, termination)
+<br />
+Latency란 출발지에서 부터 목적지 Packet 을 보내는데 걸리는 시간을 의미합니다. Latency는 위의 사례에서도 언급했듯, 네트워크를 이어주는 케이블의 물리적 거리에 의해 결정됩니다. 이는 매우 정확한 의미긴 하지만, 동시에 많은 중요한 요소들을 함축하고 있습니다. Latency에 있어 이러한 요소들은 성능과 관련 된 중요한 부분이기 때문에 짚고 넘어가도록 하겠습니다. 클라이언트와 서버간의 메시지를 주고 받는 일반적인 인터넷 라우터에 있어 이러한 속도를 결정하는 요소들이 무엇인지 먼저 살펴보겠습니다.
 
-Network Layer
+<br />
+<br />
 
-- Provide host addressing (IP)
-- Choose the best path to the destination (Routning)
-- Swtich packets out of the correcty interface (Forwarding)
-- Maintain quality of service (QoS) 우선순위 결정
-- Connectionless end-to-end networking
+---
+
+_Propagation Delay_ (전파지연) <br />
+
+메시지가 송신자로부터 수신자까지 도착하는데 걸리는 시간입니다. 송신자와 수신자라는 두 개체를 잇는 매체의 특성과 거리에 의해서 결정됩니다.
+
+_Transmission Delay_ <br />
+
+특정 링크로 패킷의 비트들을 몰아 넣는데 걸리는 시간입니다. 이는 패킷의 길이와 링크의 데이터 속도에의해 결정됩니다.
+
+_Processing Delay_ <br />
+
+패킷의 헤더를 처리하는데 걸리는 시간입니다. Bit 단위의 에러를 검수하고, packet의 목적지를 결정합니다.
+
+_Queuing Delay_ <br />
+
+대기열에 패킷이 처리되기 까지 걸리는 시간을 의미합니다.
+
+---
+
+<br />
+각 지연들에 대해 거창하게 설명하긴 했으나, 결국 이것들이 합쳐져 최종 latency가 결정된다는 것이 요점입니다. 그렇다면 전체적인 흐름을 정리하겠습니다.
+<br />
+<br />
+
+예를들어 5mb 짜리 파일을 1 Mbps, 100 Mbps 의 전송속도를 갖고 있는 두 종류의 링크에 각각 보낸다고 가정해봅시다. 1Mbps 의 속도를 가지고 있는 링크에는 총 5초의 시간이 걸릴 것 이며, 100Mbps 짜리 속도를 가지고 있는 링크에는 0.05초가 걸릴 것입니다. 패킷이 라우터에 도착했을 때, 라우터는 패킷의 헤더를 통해 패킷의 도착지를 판단할 것 입니다. 이 과정에 걸리는 시간이 바로 Processing Delay 입니다. 만약 패킷이 라우터가 처리할 수 있는 속도보다 더 빠르게 도착한다면 패킷은 수신되는 버퍼라는 신호안의 대기열에 포함 될 것 입니다. 이 것이 위의 Queuing Delay 입니다. 네트워크를 통해 패킷이 이동하는 동안 이러한 지연시간들이 반복적으로 생깁니다. 즉 거리가 멀 수록 이러한 지연시간이 늘어나겠죠. 마지막으로, 더 많은 트래픽이 같은 경로를 이동하고 있다면 buffer 안에 대기열이 생기므로 자연스럽게 지연이 생길 것입니다.
+
+Bandwidth 는 고정 된 시간안에 얼마나 많은 데이터가 전송될 수 있는 지를 의미합니다. 이름 그대로 커뮤니케이션 밴드의 두께를 의미하며, 이 두께가 넓을 수록 동시에 전송 될수 있는 데이터의 양이 많아 지게 됩니다. 특히 최근에는 비디오 스트리밍 서비스등 요구되는 데이터의 양 자체가 많아지면서 더 큰 Bandwidth에 대한 수요가 늘어났습니다.
+
+보통 사람들이 "인터넷 속도" 라는 이야기를 할 때, 이는 대게 네트워크의 bandwidth를 지칭하는 것 입니다. 이러한 Bandwidth 는 traffic 숫자로도 해석될 수 있습니다. 특히 CDN 이나 웹호스팅 같이 송/수신량에 따른 가격 모델을 갖고 있는 것들은 traffic 숫자를 직접적으로 표현하는 사례가 많습니다. 즉 둘의 근본적인 차이는, 어떠한 방식으로 측정하냐에 따라 만들어집니다. Bandwidth 가 전송되는 데이터의 양을 이야기 한다면, Latency 는 전송에 걸리는 시간을 의미하는 것입니다.
+따라서 앱의 속도를 빠르게 하기위해서는, 프로토콜과 네트워크가 latency 와 bandwidth 를 의식해서 설계되어야 할 것 입니다. 데이터의 왕복횟수를 줄이고, 데이터를 클라이언트에게 더 가깝게 하며, caching 과 pre-fetching 등의 테크닉으로 성능을 최적화 해야할 것 입니다.
+
+이 둘을 언급하는 이유는 이후에 다룰 내용들에 있어서 무엇이 어떠한 속도에 영향을 미치고, 따라서 각 프로토콜 혹은 디바이스가 어떠한 장점과 단점을 갖고 있는지 명확하게 구분하기 위한 이해를 돕고자 하기 위함입니다.
+
+<br />
+
+## OSI 의 7계층과 TCP/IP 모델
+
+[TCP_IP]
+
+OSI 모델 혹은 TCP/IP 모델이란 네트워킹 시스템의 역할들을 계층별로 분할해놓은 하나의 개념적 프레임워크 입니다. 이러한 모델은 각 역할들을 구분해놓음 으로써 특정한 네트워킹 시스템에 어떠한 일들이 벌어지고 있는지 시각적으로 표현하기 위해서 만들어졌습니다.
+
+| OSI                                              | TCP/IP                                       |
+| ------------------------------------------------ | -------------------------------------------- |
+| Open Systems Interconnection                     | Transmission Control Protocols               |
+| 7 계층이 존재                                    | 4 개의 계층만이 존재                         |
+| 신뢰성이 떨어짐                                  | 더 신뢰성 있음                               |
+| 경계가 뚜렷함                                    | 뚜렷한 경계가 없음                           |
+| 수직적 접근                                      | 수평적 접근                                  |
+| Presentation 과 Session 계층을 나눠놓음          | Presentation, Session 은 Application 소속    |
+| 모델 기준 프로토콜                               | 프로토콜 기준 모델                           |
+| Transport 계층은 패킷의 전달을 보장함            | Transport 계층은 패킷의 전달을 보장하지 않음 |
+| Connectionless, connection 기반 서비스 모두 제공 | 네트워크 계층은 Connectionless 서비스만 제공 |
+| 기술이 발전할때마다 Protocol 들은 쉽게 바뀜      | TCP/IP에서 Protocol은 쉽게 바뀔 수 없음      |
+
+[OSI]
+
+둘의 차이점은 먼저 OSI 모델의 경우 참고용도로 이론적인 모델의 형태만을 제공합니다. TCP/IP 는 OSI 모델의 조금더 실질적인 버전이라고 생각하시면 됩니다. OSI 는 7 계층으로 분리되어 있는 반면, TCP/IP 는 Application, Transport, Network, Physical 이라는 네 가지 계층으로 구분 되어 있습니다. 먼저 위의 예시에 표시 된 TCI/IP 의 1단계인 Physical 계층은 Network Access 계층이라고도 불리우는데, OSI 의 Datalink 와 Physical, 두 계층의 역할을 합니다. 또한 TCP/IP 모델의 가장 윗 계층에 속해있는 Application Layer 는 OSI 모델상 Application, Presentation, Session 을 모두 합쳐놓은 계층입니다. 따라서 TCP/IP 는 4계층을 갖게 되는데, 1 단계인 Physical 을 두개로 나눠서 설명하는 경우도 있어 때로는 5 계층으로 보여지기도 합니다. 이번 포스팅에서는 OSI 모델을 설명하는 대신 TCP/IP 모델을 중점적으로 설명하도록 하겠습니다.
+
+[IPS]
+
+1. Physical 계층
+
+이 계층은 가장 하단에 있는 계층으로 data 를 bit와 frame 형식으로 다루게 됩니다. 아시다시피, bit 는 0과 1로 이루어져 있는 데이터 신호고, Frame 은 Packet 정보를 담고있는 하나의 container 라고 이해하시면 됩니다. 먼저 물리적인 개제에서 이 계층은 호스트(네트워크상 컴퓨터)간의 통신을 담당합니다. 정보가 어떻게 송신되는 디바이스과 통신 방식을 결정합니다. 송신되는 디바이스란, 무선 혹은 유선을 의미하며 방식이란 simplex, half-duplex, full-duplex 모드를 의미합니다.
+
+또한 Data-Link 계층의 역할도 겸하고 있기 때문에 데이터 패킷에 대한 헤더 정보를 추가하는 역할을 합니다. 이 헤더란 패킷의 출신과 도착지에 대한 정보를 설정합니다. 따라서 물리적인 경로 설정 역시 이 계층의 역할에 포함됩니다. 에러나, 잘못된 데이터 프레임이 있다면 이 단계에서 걸러져서 제 송신 되게 됩니다.
+
+본 포스팅은 소프트웨어 개발자 관점의 이야기이니 물리적인 부분에 대한 자세한 내용은 피하도록 하겠습니다.
+
+2. Network 계층
+
+Internet 계층이라고도 불리우는 이 계층은 OSI 모델상의 네트워크 계층과 동일한 개념입니다. datagram 혹은 packet 형태로써 데이터를 다루며, IP 주소를 추가해줍니다. 아이피 주소는 IPv4(Internet Protocol Version 4) 혹은 IPv6(Internet Protocol Version 6)을 통해 생성됩니다.
+
+네트워크를 담당하는 계층이닌만큼 IP 주소를 이용해 데이터 페킷의 라우팅을 하는 역할도 겸하고 있습니다. 이 계층을 통하며 한 네트워크 에서 다른 네트워크로 데이터 페킷이 보내질 수 있게 됩니다. IP(Internet Protocol), ICMP(Internet Control Message Protocol), IGMP(Internet Group Management Protocol), ARP(Address Resolution Protocol), RARP(Reverse Address Resolution Protocol), 등과 같은 프로토콜들이 이 계층에서 사용됩니다.
+
+1. Transport 계층
+
+Transport 계층은 TCP/IP 모델의 3번째 (혹은 4번째) 계층입니다. bit, frame, datagram, packet 의 상위 형태인 data segment 라는 형태의 데이터를 다루게 됩니다. 상위 계층으로 부터 부여받은 데이터를 나누는 역할을 합니다. 데이터를 전송하고 어플리케이션 계층과 아래 계층간의 통신을 연결해주는 기능을 합니다. 한 끝에서 다른 한끝을 잇는 통신과 에러가 없는 데이터를 전송하는 것을 가능케 합니다. 또한 데이터 전송속도를 지정해줌으로써 플로우 컨트롤을 가능하게 합니다. 이 계층은 데이터의 근원지 포트번호와 목적지를 통해 프로세스간 통신을 하는데에 이용됩니다.
+
+이 계층은 다음의 프토토콜들을 이용해서 역할을 수행합니다:
+
+TCP: TCP의 약자는 Transmission Control Protocol(전송제어 프로토콜)로 연결 기반의 프로토콜입니다. 연결 기반 프로토콜이라는 것은 TCP를 기반 한 통신은 연결이 이루어진 다음 시작된다는 의미이며 이후 TCP 에 대한 자세한 설명에서 다루도록 하겠습니다. 데이터의 순서를 처리하고 나누는 것이 주 역할이며, 데이터를 전송할 때 플로우와 에러등을 제어합니다. 수신하는 데이터를 인지하고 확인하는 acknowledgement 기능이 해당 프로토콜에 포함되어 있습니다. 종합적으로 이 프로토콜은 느리지만 데이터의 확실성을 갖고 있습니다. 따라서 실시간성을 필요로 하지 않는 데이터들에 대해 유리한 형태입니다. 우리가 익히 아는 http 역시 이 프로토콜을 기반으로 하고 있습니다.
+
+UDP: UDP 는 User Datagram Protocol(사용자 제어 프로토콜)의 약자 입니다. 이 프로토콜은 위의 TCP 와 반대로 connection-less, 즉 연결이 없는 프로토콜 입니다. 플로우 제어나 에러 제어는 이 프로토콜의 사양에 포함되어 있지 않습니다. 또한 수신 된 데이터에 대해 확인 하는 기능이 없습니다. 이 프로토콜은 매우 가볍고 빠르나 데이터의 전송에 있어서 신뢰할 수 있는 프로토콜은 아닙니다. 보통 실시간 데이터에 적합합니다.
+
+4. Application 계층
+
+TCP/IP 모델의 Application 계층은 OSI 모델 상의 상위 3단계인 Application, Presentation, Session 와 동일 한 개념입니다. 데이터 메시지로 통신을 하며, 네트워크 서비스들과 어플리케이션 프로그램간의 인터페이스를 제공합니다. 실질적으로 최종 사용자에게 네트워크상의 서비스를 제공 하는 것은 바로 이 계층입니다. 여기서 서비스란 파일 전송, 웹 브라우징 등과 같은 것을 의미합니다. 이 계층에서는 보편적인 상위 프로토콜인 HTTP, HTTPS, FTP, FMTP, SMTP, Telnet 등을 사용합니다.
+
+어플리 케이션은 네트워크 연결을 설정하고 연결을 관리하는데 도움을 줍니다. 유저의 프로그램의 데이터에 대한 인증과 권한을 체크하며, 데이터 해석, 암호화, 복호화, 데이터 압축등의 복잡한 업무를 담당합니다. 또한 application 계층은 송신인과 수신인의 데이터를 동기화 시킵니다. 해당 계층의 주역할을 요약하자면 trasnport 계층 서비스들과 함께 어플리케이션에 대한 인터페이스를 제공하는 것 입니다.
+
+[TCP-IP detail]
+
+**위의 이미지는 각 계층들이 어떠한 장비(device) 를 주로 이용하는지 설명되어 있습니다.**
+
+이런 모델들이 있다는 것은 네트워크에서 어떠한 역할을 하는 요소들이 존재하는지, 각 역할이 무엇인지 파악하기에는 좋습니다. 하지만 결국 모델은 모델일 뿐 실질적으로 적용했을 때는 이론상과 조금 다릅니다. SSL 과 TLS 을 예시로 살펴봅시다. TLS는 말그대로 Transport Layer Security, 즉 앞서 말한 모델에서 Transport Layer 의 일부입니다. 하지만 실질적으로는 OSI 모델의 Application, Presentation, Session 혹은 TLS/IP 의 Application Layer 에 적용되고 있습니다. TLS는 내부적인 transport는 TCP를 사용하기 때문에 transport layer 에 적합하겠지만, SSL/TLS 는 헨드셰이크를 쓰기 때문에 Session Layer 라고도 볼 수 있고, encryption(암호화) 역할 까지 하기 때문에 Application 과 Presentation Layer 에 속한 것일 수도 있습니다. 하지만 Application 이 SSL과 TLS를 transport layer 로 쓰기 때문에 실질적으로는 Transport layer 에 속해야 합니다. 쉽게 말해서 모델은 어디까지나 이해를 하기 위해서 구분해놓은 것이지 절대적인 기준으로 받아들여서는 안될 것 입니다.
 
 ## TCP
 
-인터넷의 핵심과도 같은 두 프로토콜은 IP 와 TCP 입니다. (TCP/IP)
-IP 는 위에서 말했다시피 host 에서 다른 host로 가는 라우팅(routing)과 어드레싱(addressing) 기능을 제공해주며, TCP(Transmission Control Protocol)은 불안정한 통로위에 안정적인 네트워크가 이루어질 수 있도록 만들어줍니다. 1981년, RFC675 라는 하나의 제안서로 시작 된 이 TCP는 몇 가지 보완된 점은 있지만 오늘 날의 웹에서 사용되는 통신 방식입니다. 이러한 TCP는 네트워크에 대한 효율적인 "추상화" 를 제공하는데, 네트워크 커뮤니케이션에 있어서 복잡한 요소들인 잃어버린 데이터에 대한 재전송(retransmission), 정렬된 송신(in-order delivery), congestion control(막힘 제어), congestion avoidance(막힘 회피) 등에 대한 내용을 담고있습니다. 앞서 언급드린 TCP의 데이터 확실성은 브라우저상의 웹 성능을 최적화 시키는데에 대한 몇 가지 장애요소들을 필연적으로 만들게 됩니다.
+오늘 날 인터넷의 심장이라고 봐도 과언이 아닌 두 프로토콜은 IP 와 TCP 입니다. (TCP/IP) <br />
+IP 는 위에서 말했다시피 host 에서 다른 host로 가는 라우팅(routing)과 어드레싱(addressing) 기능을 제공해주며, TCP(Transmission Control Protocol)은 불안정한 통로위에 안정적인 네트워크가 이루어질 수 있도록 만들어줍니다. 1981년, RFC675 라는 하나의 제안서로 시작 된 이 TCP는 몇 가지 보완된 점은 있지만 오늘 날의 웹에서 사용되는 통신 방식입니다. 이러한 TCP는 네트워크에 대한 효율적인 "추상화" 를 제공하는데, 네트워크 커뮤니케이션에 있어서 복잡한 요소들인 잃어버린 데이터에 대한 재전송(retransmission), 정렬된 송신(in-order delivery), congestion control(혼잡 제어), congestion avoidance(혼잡 회피) 등에 대한 내용을 담고있습니다. 앞서 언급드린 TCP의 데이터 확실성은 브라우저상의 웹 성능을 최적화 시키는데에 대한 몇 가지 장애요소들을 필연적으로 만들게 됩니다.
+
+<br />
 
 ### Three-Way Handshake
 
+<br />
 모든 TCP 연결은 Three-Way Handshake, 세 방향 악수로 시작합니다. 클라이언트와 서버간의 통신이 시작되기 전, 이 둘은 packet 수열에 각자 동의해야 합니다. 이 수열은 양측 방향에서 임의적으로 선택되는데 다음의 이미지를 참조해주시길 바랍니다.
 
+<br />
+<br />
+ 
 **SYN**<br />
 클라이언트는 앞서 설명했듯이, 임의적으로 수열 숫자 x 를 만들어서 경우에따라 TCP 스펙상의 플래그와 설정 값을 부여하고 서버로 보냅니다.
 
@@ -66,27 +181,47 @@ IP 는 위에서 말했다시피 host 에서 다른 host로 가는 라우팅(rou
 
 ### Congestion Avoidance & Control
 
+Congestion Control 은 복잡한 네트워크에 있어 커다란 문제였습니다. 순수 데이터 형태의 프로토콜인 IP 와 전송 레이어 프로토콜인 TCP가 특히 서로 다른 대역폭을 갖고 있을 때 "Congestion Collapse" 라는 것이 발생합니다. 간단하게 요약하자면, 네트워크간의 왕복 횟수가 최대 재전송 주기를 넘어섰을 때 다른 한쪽의 반응이 없어, 중복된 데이터그램을 전송하게 됩니다. 결국 모든 노드의 버퍼 데이터는 최대가 되며, 전송되는 패킷의 양을 줄여야하는 상황이 발생합니다. 네트워크가 무너지지는 않지만, 점점 수용량이 줄어들게 되며 최종적으로는 사용할 수 없는 상태에 이르게 됩니다. 이러한 문제점을 해결하기 위해 TCP 에서 어떠한 데이터들이 양 방향으로 보내질 수 있는지 관리할 수 있도록 다음의 기술들이 적용되게 됩니다: flow control, congestion control, congestion avoidance.
+
+<br />
+
+**Flow Control**
+
+플로우 콘트롤은 수신자가 감당할 수 없을 정도의 많은 데이터를 송신하는 것을 방지하기 위해 만들어졌습니다. TCP 연결의 양측은 receive window (rwnd) 라는 것을 만드는데, 이 것은 서로에게 양측이 갖고 있는 수용 가능한 버퍼 용량의 상태를 알려줄 수 있습니다. 기본적인 메커니즘은 다음과 같습니다. 처음 연결이 발생했을 때, 시스템 설정에 따라 초기 rwnd 값을 갖고 시작합니다. 일반적인 웹 페이지는 서버로부터 클라이언트에게 대부분의 데이터를 송신하게 되는데, 이 때문에 클라이언트 쪽의 윈도우가 바틀넥 현상이 일어나는 상황이 발생하게 됩니다. 만약 클라이언트가 비디오나 이미지를 업로드 하는 등 큰 양의 데이터를 서버쪽으로 보낸다면, 서버의 rwnd가 발목을 붙잡게 됩니다.
+
+만약 어떠한 이유로든, 한쪽이 다른 한쪽에 맞출 수 없다면, rwnd의 사이즈를 낮출 것을 송신자에게 요청하게 됩니다. 만약 이 사이즈가 0 된다면, 모든 버퍼 데이터가 어플리케이션 레이어상에서 클리어 될 떄 까지 데이터를 송신하지 않습니다.
+
+<br />
+
 **Slow-Start**
+
+위의 flow control 기능에도 불구하고,
 
 ### TCP 최적화
 
+When a SYN packet is sent using TCP it waits for a SYN+ACK response, the time between sending and receiving is the latency. It's a function of one variable ie time.
+
+If we're doing this on a 100Mbit connection this is the theoretical bandwidth that we have i.e. how many bits per second we can send.
+
+If I compress a 1000Mbit file to 100Mbit and send it over the 100Mbit line then my effective throughput could be considered 1Gbit per second. Theoretical throughput and theoretical bandwidth are the same on this network but why am I saying the throughput is 1Gbit per second.
+
 ## UDP
 
-| Pros            | Cons                          |
-| --------------- | ----------------------------- |
-| 작은 packet 크기 | 확인이 안됨                      |
-| Bandwidth 를 덜 차지함  | 전달이 보장되지 않음                |
-| TCP 보다 빠름 | congestion control이 없음       |
-| Stateless       | packet의 순서가 보장되지 않음       |
-|                 | Connectionless                |
-|                 | 보안문제                        |
+| Pros                   | Cons                          |
+| ---------------------- | ----------------------------- |
+| 작은 packet 크기       | 확인이 안됨                   |
+| Bandwidth 를 덜 차지함 | 전달이 보장되지 않음          |
+| TCP 보다 빠름          | congestion control이 없음     |
+| Stateless              | packet의 순서가 보장되지 않음 |
+|                        | Connectionless                |
+|                        | 보안문제                      |
+
+<br />
 
 들어오는 데이터를 제어할 방법이 전무하기 때문에 많은 사람들이 UDP 를 끄기도 합니다.
 
-### UDP 최적화
+사실 이번 포스팅에서 UDP를 간단하게 다루고 넘어가는 이유는 이후 HTTP 관련 포스팅의 QUIC/HTTP3 항목에서 중점적으로 다룰 내용이기 때문에 그렇습니다. 아직은 직접적으로 와닿지 않지만,
+
+## TCP vs UDP
 
 ## TLS
-
-
-
-
